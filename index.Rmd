@@ -12,6 +12,50 @@ github-repo: rstudio/bookdown-demo
 description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
 ---
 
+
+```{r setup, include=FALSE, dev="CairoPNG"}
+# the setup chunk MUST be at the very first code chunk of the .Rmd document in order to execute on the HPC because the cluster doesn't have certain graphical libraries installed
+knitr::opts_chunk$set(
+  echo = FALSE,
+  error = TRUE,
+  dev="CairoPNG"
+)
+options(bitmapType='cairo')
+```
+
+```{r htmlTemp3, echo=FALSE, eval=TRUE}
+# https://stackoverflow.com/a/45501553
+codejs <- readr::read_lines("js/codefolding.js")
+collapsejs <- readr::read_lines("js/collapse.js")
+transitionjs <- readr::read_lines("js/transition.js")
+
+htmlhead <- 
+  paste('
+<script>',
+paste(transitionjs, collapse = "\n"),
+'</script>
+<script>',
+paste(collapsejs, collapse = "\n"),
+'</script>
+<script>',
+paste(codejs, collapse = "\n"),
+'</script>
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+', sep = "\n")
+
+readr::write_lines(htmlhead, path = "header.html")
+```
+
 # Prerequisites
 
 This is a _sample_ book written in **Markdown**. You can use anything that Pandoc's Markdown supports, e.g., a math equation $a^2 + b^2 = c^2$.
@@ -34,3 +78,12 @@ knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
 ```
+
+
+This is an R code chunk:
+```{r echo=TRUE}
+a <- 10
+b <- 5
+a + b
+```
+
